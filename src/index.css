@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&family=Space+Grotesk:wght@600;700;800&display=swap');
+
+:root {
+  --ink: #07120d;
+  --paper: #f8f6ee;
+  --surface: #fffdf4;
+  --soft: #edf2e8;
+  --line: #c9d0c0;
+  --muted: #5f6b61;
+  --acid: #b3ff54;
+  --cyan: #69e8d5;
+  --tomato: #ff6b4a;
+  --display: 'Space Grotesk', 'Trebuchet MS', sans-serif;
+  --mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --small-shadow: 0 10px 30px rgba(7, 18, 13, 0.08);
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--display);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    linear-gradient(90deg, rgba(7, 18, 13, 0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(7, 18, 13, 0.05) 1px, transparent 1px),
+    linear-gradient(135deg, #fffdf4 0%, #f5f1dd 42%, #e8f6ef 100%);
+  background-size: 34px 34px, 34px 34px, cover;
+}
+
+button,
+a {
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--tomato);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: var(--ink);
+  background: var(--acid);
+}

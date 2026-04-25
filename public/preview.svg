@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-label="Codegotchi preview">
+  <rect width="1200" height="720" fill="#f8f6ee"/>
+  <path d="M0 0h1200v720H0z" fill="url(#grid)"/>
+  <rect x="84" y="76" width="1032" height="568" rx="24" fill="#fffdf4" stroke="#07120d" stroke-width="4"/>
+  <rect x="84" y="76" width="1032" height="58" rx="24" fill="#07120d"/>
+  <circle cx="128" cy="105" r="9" fill="#ff6b4a"/>
+  <circle cx="158" cy="105" r="9" fill="#fff3a4"/>
+  <circle cx="188" cy="105" r="9" fill="#b3ff54"/>
+  <text x="238" y="113" fill="#eaffef" font-family="IBM Plex Mono, Courier New, monospace" font-size="22" font-weight="700">Codegotchi menu bar memory</text>
+  <text x="136" y="220" fill="#07120d" font-family="Space Grotesk, Trebuchet MS, sans-serif" font-size="70" font-weight="800">Remember what</text>
+  <text x="136" y="296" fill="#07120d" font-family="Space Grotesk, Trebuchet MS, sans-serif" font-size="70" font-weight="800">you built today.</text>
+  <text x="140" y="358" fill="#5f6b61" font-family="Space Grotesk, Trebuchet MS, sans-serif" font-size="28" font-weight="600">Prompts, commits, notebooks, tokens, and portfolio output.</text>
+  <rect x="730" y="190" width="270" height="298" rx="12" fill="#e8f6ef" stroke="#07120d" stroke-width="4"/>
+  <rect x="730" y="190" width="270" height="46" rx="12" fill="#07120d"/>
+  <text x="754" y="220" fill="#eaffef" font-family="IBM Plex Mono, Courier New, monospace" font-size="18" font-weight="700">Prompt Keeper</text>
+  <text x="780" y="312" fill="#07120d" font-family="IBM Plex Mono, Courier New, monospace" font-size="36" font-weight="700"> &lt;@_@&gt;</text>
+  <text x="780" y="364" fill="#07120d" font-family="IBM Plex Mono, Courier New, monospace" font-size="36" font-weight="700">/|===|\</text>
+  <text x="780" y="416" fill="#07120d" font-family="IBM Plex Mono, Courier New, monospace" font-size="36" font-weight="700"> /_|_\</text>
+  <rect x="136" y="438" width="182" height="54" rx="8" fill="#b3ff54" stroke="#07120d" stroke-width="3"/>
+  <text x="166" y="473" fill="#07120d" font-family="Space Grotesk, Trebuchet MS, sans-serif" font-size="22" font-weight="800">Star on GitHub</text>
+  <rect x="342" y="438" width="190" height="54" rx="8" fill="#fffdf4" stroke="#07120d" stroke-width="3"/>
+  <text x="378" y="473" fill="#07120d" font-family="Space Grotesk, Trebuchet MS, sans-serif" font-size="22" font-weight="800">Export career log</text>
+  <defs>
+    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0v34" fill="none" stroke="#07120d" stroke-opacity=".06"/>
+    </pattern>
+  </defs>
+</svg>
