@@ -3,6 +3,7 @@ const path = require('node:path')
 
 let tray
 let window
+const isDev = Boolean(process.env.CODEGOTCHI_DEV_URL)
 
 function createTrayIcon() {
   const svg = `
@@ -68,13 +69,16 @@ function toggleWindow() {
 }
 
 app.whenReady().then(() => {
-  if (process.platform === 'darwin') {
+  if (process.platform === 'darwin' && !isDev) {
     app.dock.hide()
   }
 
   createWindow()
   tray = new Tray(createTrayIcon())
   tray.setToolTip('Codegotchi')
+  if (process.platform === 'darwin' && isDev) {
+    tray.setTitle(' Codegotchi ')
+  }
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: 'Show Codegotchi', click: toggleWindow },
@@ -84,6 +88,10 @@ app.whenReady().then(() => {
     ]),
   )
   tray.on('click', toggleWindow)
+
+  if (isDev) {
+    window.once('ready-to-show', toggleWindow)
+  }
 })
 
 app.on('window-all-closed', (event) => {
