@@ -19,11 +19,11 @@ function createTrayIcon() {
 
 function createWindow() {
   window = new BrowserWindow({
-    width: 430,
-    height: 680,
+    width: 460,
+    height: 720,
     show: false,
-    resizable: false,
-    frame: false,
+    resizable: true,
+    frame: true,
     transparent: false,
     title: 'Codegotchi',
     webPreferences: {
@@ -38,33 +38,40 @@ function createWindow() {
   } else {
     window.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
   }
-
-  window.on('blur', () => {
-    if (!window.webContents.isDevToolsOpened()) {
-      window.hide()
-    }
-  })
 }
 
 function positionWindow() {
   const trayBounds = tray.getBounds()
   const windowBounds = window.getBounds()
   const display = screen.getDisplayNearestPoint({ x: trayBounds.x, y: trayBounds.y })
-  const x = Math.round(trayBounds.x + trayBounds.width / 2 - windowBounds.width / 2)
-  const y = Math.round(display.workArea.y + 8)
+  const fallbackX = Math.round(display.workArea.x + display.workArea.width / 2 - windowBounds.width / 2)
+  const fallbackY = Math.round(display.workArea.y + display.workArea.height / 2 - windowBounds.height / 2)
+  const trayX = Math.round(trayBounds.x + trayBounds.width / 2 - windowBounds.width / 2)
+  const trayY = Math.round(display.workArea.y + 24)
+  const x = Number.isFinite(trayX) && trayBounds.width > 0 ? trayX : fallbackX
+  const y = Number.isFinite(trayY) ? trayY : fallbackY
 
   window.setPosition(x, y, false)
 }
 
-function toggleWindow() {
-  if (window.isVisible()) {
-    window.hide()
+function showWindow() {
+  if (window.isDestroyed()) {
     return
   }
 
   positionWindow()
   window.show()
   window.focus()
+  window.moveTop()
+}
+
+function toggleWindow() {
+  if (window.isVisible() && window.isFocused()) {
+    window.hide()
+    return
+  }
+
+  showWindow()
 }
 
 app.whenReady().then(() => {
@@ -76,14 +83,21 @@ app.whenReady().then(() => {
   }
   tray.setContextMenu(
     Menu.buildFromTemplate([
-      { label: 'Show Codegotchi', click: toggleWindow },
+      { label: 'Show Codegotchi', click: showWindow },
       { label: 'Hide', click: () => window.hide() },
       { type: 'separator' },
       { label: 'Quit', role: 'quit' },
     ]),
   )
-  tray.on('click', toggleWindow)
-  window.once('ready-to-show', toggleWindow)
+  tray.on('click', showWindow)
+  window.once('ready-to-show', showWindow)
+  window.webContents.once('did-finish-load', showWindow)
+})
+
+app.on('activate', () => {
+  if (window) {
+    showWindow()
+  }
 })
 
 app.on('window-all-closed', (event) => {
