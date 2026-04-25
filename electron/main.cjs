@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, Tray, nativeImage, screen } = require('electron')
+const { app, BrowserWindow, Menu, Tray, nativeImage } = require('electron')
 const path = require('node:path')
 
 let tray
@@ -19,11 +19,13 @@ function createTrayIcon() {
 
 function createWindow() {
   window = new BrowserWindow({
-    width: 460,
-    height: 720,
-    show: false,
+    width: 1180,
+    height: 820,
+    show: true,
     resizable: true,
     frame: true,
+    center: true,
+    alwaysOnTop: true,
     transparent: false,
     title: 'Codegotchi',
     webPreferences: {
@@ -38,20 +40,12 @@ function createWindow() {
   } else {
     window.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
   }
-}
 
-function positionWindow() {
-  const trayBounds = tray.getBounds()
-  const windowBounds = window.getBounds()
-  const display = screen.getDisplayNearestPoint({ x: trayBounds.x, y: trayBounds.y })
-  const fallbackX = Math.round(display.workArea.x + display.workArea.width / 2 - windowBounds.width / 2)
-  const fallbackY = Math.round(display.workArea.y + display.workArea.height / 2 - windowBounds.height / 2)
-  const trayX = Math.round(trayBounds.x + trayBounds.width / 2 - windowBounds.width / 2)
-  const trayY = Math.round(display.workArea.y + 24)
-  const x = Number.isFinite(trayX) && trayBounds.width > 0 ? trayX : fallbackX
-  const y = Number.isFinite(trayY) ? trayY : fallbackY
-
-  window.setPosition(x, y, false)
+  setTimeout(() => {
+    if (!window.isDestroyed()) {
+      window.setAlwaysOnTop(false)
+    }
+  }, 2500)
 }
 
 function showWindow() {
@@ -59,18 +53,20 @@ function showWindow() {
     return
   }
 
-  positionWindow()
+  window.center()
+  window.setAlwaysOnTop(true)
   window.show()
+  window.restore()
   window.focus()
   window.moveTop()
+  setTimeout(() => {
+    if (!window.isDestroyed()) {
+      window.setAlwaysOnTop(false)
+    }
+  }, 2500)
 }
 
 function toggleWindow() {
-  if (window.isVisible() && window.isFocused()) {
-    window.hide()
-    return
-  }
-
   showWindow()
 }
 
@@ -90,7 +86,6 @@ app.whenReady().then(() => {
     ]),
   )
   tray.on('click', showWindow)
-  window.once('ready-to-show', showWindow)
   window.webContents.once('did-finish-load', showWindow)
 })
 
