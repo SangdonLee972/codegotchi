@@ -19,11 +19,11 @@ const stages = [
 
 function scoreFromStats(stats) {
   return (
-    stats.commits * 9 +
-    stats.notebooks * 13 +
-    stats.memoryGb * 2 +
-    Math.floor(stats.tokens / 1000) * 5 +
-    stats.streak * 20
+    stats.commits * 6 +
+    stats.notebooks * 10 +
+    Math.min(stats.memoryGb, 64) +
+    Math.floor(Math.min(stats.tokens, 250_000) / 5000) * 3 +
+    stats.streak * 18
   )
 }
 
@@ -58,7 +58,7 @@ function render({ showPortfolio = false, frame = 0 } = {}) {
   console.log('')
   console.log(face.join('\n'))
   console.log('')
-  console.log(`${stage.name}  LV ${Math.floor(score / 100) + 1}  ${score.toLocaleString()} growth points`)
+  console.log(`${stage.name}  LV ${Math.floor(score / 180) + 1}  ${score.toLocaleString()} growth points`)
   console.log(`[${bar(score, progressMax)}] ${nextStage ? `next: ${nextStage.name}` : 'max demo stage'}`)
   console.log('')
   console.log(`Commits        ${snapshot.stats.commits}`)

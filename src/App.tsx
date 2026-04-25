@@ -133,11 +133,11 @@ const events = [
 
 function scoreFromStats(stats: Stats) {
   return (
-    stats.commits * 9 +
-    stats.notebooks * 13 +
-    stats.memoryGb * 2 +
-    Math.floor(stats.tokens / 1000) * 5 +
-    stats.streak * 20
+    stats.commits * 6 +
+    stats.notebooks * 10 +
+    Math.min(stats.memoryGb, 64) +
+    Math.floor(Math.min(stats.tokens, 250_000) / 5000) * 3 +
+    stats.streak * 18
   )
 }
 
@@ -278,7 +278,7 @@ function App() {
         <section className="pet-console" aria-label="Current Codegotchi">
           <div className="console-header">
             <span>{stage.name}</span>
-            <span>LV {Math.floor(score / 100) + 1}</span>
+            <span>LV {Math.floor(score / 180) + 1}</span>
           </div>
           <pre aria-label={`${stage.name} ASCII avatar`}>{stage.face}</pre>
           <div className="stage-copy">

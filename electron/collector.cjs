@@ -140,14 +140,14 @@ function collectPromptMetrics(start) {
       }
 
       promptFiles += 1
-      estimatedTokens += Math.max(1, Math.round(stat.size / 4))
+      estimatedTokens += Math.max(1, Math.round(Math.min(stat.size, 120_000) / 4))
     })
   }
 
   return {
     promptDirs,
     promptFiles,
-    estimatedTokens,
+    estimatedTokens: Math.min(estimatedTokens, 250_000),
   }
 }
 
