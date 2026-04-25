@@ -10,7 +10,7 @@ Codegotchi is a macOS status bar prototype for developers who live inside prompt
 
 - ASCII evolution stages powered by developer activity
 - Menu bar prototype powered by Electron
-- Live demo telemetry for commits, notebooks, memory, prompt tokens, and streaks
+- Local Electron telemetry for commits, notebooks, memory, prompt-log token estimates, and streaks
 - Daily memory feed that turns work into a readable story
 - Portfolio draft output from the day's coding context
 - Weekly leaderboard mockup for GitHub-friendly ranking
@@ -29,6 +29,15 @@ Run the macOS menu bar prototype:
 ```bash
 npm run app:dev
 ```
+
+In Electron mode, Codegotchi scans this Mac for local-only activity metadata:
+
+- git commits from local repositories
+- `.ipynb` files touched today
+- memory currently in use
+- `.codex` and `.claude` prompt log file counts and token estimates
+
+Raw prompt text is not uploaded anywhere. The public GitHub Pages build stays in simulated demo mode because browsers cannot read local machine data.
 
 Build for production:
 

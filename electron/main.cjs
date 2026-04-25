@@ -1,8 +1,10 @@
-const { app, BrowserWindow, Menu, Tray, nativeImage } = require('electron')
+const { app, BrowserWindow, Menu, Tray, ipcMain, nativeImage } = require('electron')
 const path = require('node:path')
+const { collectLocalSnapshot } = require('./collector.cjs')
 
 let tray
 let window
+let snapshotTimer
 
 function createTrayIcon() {
   const svg = `
@@ -31,6 +33,7 @@ function createWindow() {
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
+      preload: path.join(__dirname, 'preload.cjs'),
     },
   })
 
@@ -46,6 +49,15 @@ function createWindow() {
       window.setAlwaysOnTop(false)
     }
   }, 2500)
+}
+
+function sendLocalSnapshot() {
+  if (!window || window.isDestroyed()) {
+    return
+  }
+
+  const snapshot = collectLocalSnapshot()
+  window.webContents.send('codegotchi:local-snapshot', snapshot)
 }
 
 function showWindow() {
@@ -71,6 +83,7 @@ function toggleWindow() {
 }
 
 app.whenReady().then(() => {
+  ipcMain.handle('codegotchi:get-local-snapshot', () => collectLocalSnapshot())
   createWindow()
   tray = new Tray(createTrayIcon())
   tray.setToolTip('Codegotchi')
@@ -86,7 +99,11 @@ app.whenReady().then(() => {
     ]),
   )
   tray.on('click', showWindow)
-  window.webContents.once('did-finish-load', showWindow)
+  window.webContents.once('did-finish-load', () => {
+    showWindow()
+    sendLocalSnapshot()
+    snapshotTimer = setInterval(sendLocalSnapshot, 60_000)
+  })
 })
 
 app.on('activate', () => {
@@ -97,4 +114,10 @@ app.on('activate', () => {
 
 app.on('window-all-closed', (event) => {
   event.preventDefault()
+})
+
+app.on('before-quit', () => {
+  if (snapshotTimer) {
+    clearInterval(snapshotTimer)
+  }
 })

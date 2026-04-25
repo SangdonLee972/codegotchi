@@ -28,6 +28,11 @@ type Activity = {
   at: string
 }
 
+type PortfolioDraft = {
+  summary: string
+  bullets: string[]
+}
+
 type Stage = {
   name: string
   title: string
@@ -68,6 +73,16 @@ const starterStats: Stats = {
   memoryGb: 42,
   tokens: 28400,
   streak: 5,
+}
+
+const starterPortfolioDraft: PortfolioDraft = {
+  summary:
+    'Today I explored notebook workflows, pushed production code, and used AI prompts to compress debugging context into shippable decisions.',
+  bullets: [
+    'Built and iterated across demo commit-level changes.',
+    'Ran notebook sessions for research and validation.',
+    'Handled prompt tokens as reusable project memory.',
+  ],
 }
 
 const rivals = [
@@ -144,10 +159,13 @@ function nowLabel() {
 
 function App() {
   const [stats, setStats] = useState(starterStats)
+  const [localSnapshot, setLocalSnapshot] = useState<CodegotchiLocalSnapshot | null>(null)
+  const [portfolioDraft, setPortfolioDraft] = useState<PortfolioDraft>(starterPortfolioDraft)
   const [activity, setActivity] = useState<Activity[]>([
     { label: 'Menu bar agent booted', detail: 'local memory simulator online', at: nowLabel() },
     { label: 'Work context linked', detail: 'prompts, commits, notebooks ready', at: nowLabel() },
   ])
+  const isLocalMode = Boolean(localSnapshot)
 
   const score = scoreFromStats(stats)
   const stage = stageForScore(score)
@@ -161,6 +179,25 @@ function App() {
   ].sort((a, b) => b.score - a.score)
 
   useEffect(() => {
+    const localApi = window.codegotchi
+    if (localApi) {
+      const applySnapshot = (snapshot: CodegotchiLocalSnapshot) => {
+        setLocalSnapshot(snapshot)
+        setStats(snapshot.stats)
+        setActivity(snapshot.activity)
+        setPortfolioDraft(snapshot.portfolioDraft)
+      }
+
+      localApi.getLocalSnapshot().then(applySnapshot).catch(() => {
+        setActivity((items) => [
+          { label: 'Local scan failed', detail: 'falling back to demo simulator', at: nowLabel() },
+          ...items.slice(0, 5),
+        ])
+      })
+
+      return localApi.onLocalSnapshot(applySnapshot)
+    }
+
     const timer = window.setInterval(() => {
       const event = events[Math.floor(Math.random() * events.length)]
       setStats(event.apply)
@@ -172,6 +209,21 @@ function App() {
 
     return () => window.clearInterval(timer)
   }, [])
+
+  function refreshLocalSnapshot() {
+    if (!window.codegotchi) {
+      setStats(starterStats)
+      setPortfolioDraft(starterPortfolioDraft)
+      return
+    }
+
+    window.codegotchi.getLocalSnapshot().then((snapshot) => {
+      setLocalSnapshot(snapshot)
+      setStats(snapshot.stats)
+      setActivity(snapshot.activity)
+      setPortfolioDraft(snapshot.portfolioDraft)
+    })
+  }
 
   function triggerEvent(index: number) {
     const event = events[index]
@@ -193,7 +245,7 @@ function App() {
           <a className="icon-link" href="https://github.com/" target="_blank" aria-label="GitHub">
             <GitBranch size={19} aria-hidden="true" />
           </a>
-          <button className="icon-button" type="button" onClick={() => setStats(starterStats)} aria-label="Reset demo">
+          <button className="icon-button" type="button" onClick={refreshLocalSnapshot} aria-label={isLocalMode ? 'Rescan local data' : 'Reset demo'}>
             <RotateCcw size={18} aria-hidden="true" />
           </button>
         </div>
@@ -203,12 +255,13 @@ function App() {
         <div className="status-column">
           <div className="signal-row">
             <span className="live-dot" aria-hidden="true" />
-            <span>Mac menu bar work memory</span>
+            <span>{isLocalMode ? 'Local Mac memory active' : 'Mac menu bar work memory'}</span>
           </div>
           <h1>A tiny ASCII companion that remembers what you built today.</h1>
           <p className="intro">
-            Codegotchi lives in your macOS status bar, watches opted-in coding signals, remembers your prompts,
-            and turns a hard day of work into summaries, rankings, and portfolio-ready output.
+            {isLocalMode
+              ? 'Codegotchi is reading local git activity, prompt-log metadata, notebook touches, and memory usage from this Mac.'
+              : 'Codegotchi lives in your macOS status bar, watches opted-in coding signals, remembers your prompts, and turns a hard day of work into summaries, rankings, and portfolio-ready output.'}
           </p>
           <div className="hero-actions">
             <a className="primary-action" href="https://github.com/" target="_blank">
@@ -286,6 +339,13 @@ function App() {
               Memory
             </button>
           </div>
+          {localSnapshot ? (
+            <p className="privacy-note">
+              Local scan: {localSnapshot.dataSources.reposScanned} repos, {localSnapshot.dataSources.promptFilesIndexed} prompt files, {localSnapshot.dataSources.notebookFilesTouched} notebooks.
+            </p>
+          ) : (
+            <p className="privacy-note">Demo mode is simulated. Open the Electron app to feed Codegotchi with local-only activity metadata.</p>
+          )}
         </section>
 
         <section className="panel activity-panel" aria-label="Live activity">
@@ -312,12 +372,13 @@ function App() {
             <h2>Portfolio draft</h2>
           </div>
           <div className="portfolio-output">
-            <p>Today I explored notebook workflows, pushed production code, and used AI prompts to compress debugging context into shippable decisions.</p>
+            <p>{portfolioDraft.summary}</p>
             <ul>
-              <li>Built and iterated across {stats.commits} commit-level changes.</li>
-              <li>Ran {stats.notebooks} notebook sessions for research and validation.</li>
-              <li>Handled {formatTokens(stats.tokens)} prompt tokens as reusable project memory.</li>
+              {portfolioDraft.bullets.map((bullet) => (
+                <li key={bullet}>{bullet}</li>
+              ))}
             </ul>
+            {localSnapshot ? <small>{localSnapshot.privacyNote}</small> : null}
           </div>
         </section>
 
