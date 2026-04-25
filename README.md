@@ -30,6 +30,18 @@ Run the macOS menu bar prototype:
 npm run app:dev
 ```
 
+Run the real local terminal pet:
+
+```bash
+npm run pet
+```
+
+Print one snapshot and exit:
+
+```bash
+npm run pet:once
+```
+
 In Electron mode, Codegotchi scans this Mac for local-only activity metadata:
 
 - git commits from local repositories

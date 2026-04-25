@@ -4,9 +4,14 @@
   "version": "0.1.0",
   "description": "An ASCII menu bar companion that remembers prompts, coding activity, and portfolio-ready work summaries.",
   "main": "electron/main.cjs",
+  "bin": {
+    "codegotchi": "cli/codegotchi.cjs"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "pet": "node cli/codegotchi.cjs",
+    "pet:once": "node cli/codegotchi.cjs --once --portfolio",
     "app:dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && CODEGOTCHI_DEV_URL=http://127.0.0.1:5173 electron .\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
